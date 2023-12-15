@@ -1,9 +1,10 @@
 import os
-from rich import print
+from platform import python_version
+# from rich import print
 from subprocess import Popen, PIPE#,SubprocessError,TimeoutExpired
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __verdate__ = '2023-12-15 10:39'
-print('Обновление модулей Python') 
+print(f'Обновление модулей Python ver: {python_version()}')
 
 try:
     os.chdir(r'C:\Program Files\Python312\Scripts')
@@ -14,8 +15,9 @@ try:
         print(pls[1].decode('cp866'))
     if  bool(pls[0]):
         restxt = (pls[0].decode('cp866')).splitlines()[2:]
-        print('Доступны для обновления')
-        print(restxt)
+        print('Доступны для обновления:2')
+        for ipr in restxt:
+            print(f'\t{ipr}')
         if input('Обновить?:> '): raise Exception ('Нет, так нет')
         for it in restxt:
             print()
