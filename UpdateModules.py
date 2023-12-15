@@ -34,3 +34,4 @@ try:
         print('Все модули последней версии')
 except Exception as Ers:
     print(str(Ers))
+input(':> ')
