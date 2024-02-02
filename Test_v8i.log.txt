@@ -1,0 +1,14 @@
+2024-01-25 22:29:14;BAIKAL;DokinSergey;Test_v8i.py       ;Запуск проверки файлов ibases ver:1.0.0; от:2024-01-25 20:37 ; автор:t.me/dokin_sergey;
+2024-01-25 22:29:14;BAIKAL;DokinSergey;GetListFolder1C   ;\\moscow\ibases
+2024-01-25 22:30:18;BAIKAL;DokinSergey;Test_v8i.py       ;Запуск проверки файлов ibases ver:1.0.0; от:2024-01-25 20:37 ; автор:t.me/dokin_sergey;
+2024-01-25 22:30:18;BAIKAL;DokinSergey;GetListFolder1C   ;\\moscow\ibases
+2024-01-26 14:06:48;BAIKAL;DokinSergey;Test_v8i.py       ;Запуск проверки файлов ibases ver:1.0.0; от:2024-01-25 20:37 ; автор:t.me/dokin_sergey;
+2024-01-26 14:06:48;BAIKAL;DokinSergey;GetListFolder1C   ;\\moscow\ibases
+2024-01-26 14:07:33;BAIKAL;DokinSergey;Test_v8i.py       ;Запуск проверки файлов ibases ver:1.0.0; от:2024-01-25 20:37 ; автор:t.me/dokin_sergey;
+2024-01-26 14:07:33;BAIKAL;DokinSergey;GetListFolder1C   ;\\moscow\ibases
+2024-01-26 14:10:11;BAIKAL;DokinSergey;Test_v8i.py       ;Запуск проверки 
+файлов ibases ver:1.0.0; от:2024-01-25 20:37 ; автор:t.me/dokin_sergey;
+2024-01-26 14:10:11;BAIKAL;DokinSergey;GetListFolder1C   ;\\moscow\ibases
+2024-01-26 14:15:30;BAIKAL;DokinSergey;Test_v8i.py       ;Запуск проверки 
+файлов ibases ver:1.0.0; от:2024-01-25 20:37 ; автор:t.me/dokin_sergey;
+2024-01-26 14:15:30;BAIKAL;DokinSergey;GetListFolder1C   ;\\moscow\ibases
