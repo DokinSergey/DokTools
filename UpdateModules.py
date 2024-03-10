@@ -2,14 +2,14 @@ import os
 from platform import python_version
 # from rich import print
 from subprocess import Popen, PIPE#,SubprocessError,TimeoutExpired
-__version__ = '1.0.1'
-__verdate__ = '2023-12-15 10:39'
+__version__ = '1.0.3'
+__verdate__ = '2024-02-05 11:06'
 print(f'Обновление модулей Python ver: {python_version()}')
 
 try:
     os.chdir(r'C:\Program Files\Python312\Scripts')
     with Popen(['pip', 'list','-o'], shell=True, stdout = PIPE, stderr = PIPE) as popps:
-        pls = popps.communicate(timeout=15)
+        pls = popps.communicate(timeout=25)
     if bool(pls[1]):
         print('Error:')
         print(pls[1].decode('cp866'))
@@ -24,7 +24,7 @@ try:
             tprg = it.split()[0]
             print(f'Модуль {tprg} версии {it.split()[1]}')
             with Popen(['pip','install','-U',f'{tprg}'], shell=True, stdout = PIPE, stderr = PIPE) as popps:
-                pls = popps.communicate(timeout=15)
+                pls = popps.communicate(timeout=25)
             if bool(pls[1]):
                 print('Error:')
                 print(pls[1].decode('cp866'))
