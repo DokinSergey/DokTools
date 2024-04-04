@@ -26,3 +26,12 @@ for Colors in ListColors:
         print (f'[{Colors}]{Colors = }')
     else:
         print()
+#############################################################################
+'Message',
+'Warning',
+'ErrPoSh',
+'ErroCMD',
+'Failure',
+'Success',
+
+
