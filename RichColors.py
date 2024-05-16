@@ -1,5 +1,8 @@
 from rich import print
+# from rich.console import Console
+# cns = Console()
 version = '1.0.3'
+# Console.rule("[bold red]Chapter 2")
 print('Образей цветной печати в терминале')
 ListColors = (
     "bright_black",
