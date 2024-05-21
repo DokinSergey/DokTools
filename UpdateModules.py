@@ -53,7 +53,7 @@ def cmdexecNoOut(CMDcom:list)->str:
 if __name__ == '__main__':
     print(f'Обновление модулей Python ver: {python_version()}')
     start_time = tick_time_1 = tick_time_2 = perf_counter()
-
+#------------------------------------------------------------------------
     os.chdir(r'C:\Program Files\Python312\Scripts')
     cmdlist = ['pip', 'list','-o']
     rez = cmdexec(cmdlist)
