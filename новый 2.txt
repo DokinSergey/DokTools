@@ -1,1 +1,0 @@
-"C:\Program Files\Python312\python.exe" -i -d "$(FULL_CURRENT_PATH)"
