@@ -5,16 +5,15 @@ from rich import print as rpn
 from datetime import datetime,timezone,date,timedelta
 #--------------------------------
 _AUTHOR  = 't.me/dokin_sergey'
-_VERSION = '1.0.5'
+_VERSION = '1.0.5 IAS'
 _VERDATE = '2024-05-29 14:02'
 #---------------------------------------------
 ibapath = r'\\moscow\ibases'
 # SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
-SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
-# SrvList = ("cl-33",)
-LogFile = os.path.join(os.path.realpath(''),'log_')
-ErrFile = os.path.join(os.path.realpath(''),'err_')
-ResFile = os.path.join(os.path.realpath(''),'Res_')
+debug = False
+LogFile = os.path.join(os.path.realpath(''),'log_ias_')
+ErrFile = os.path.join(os.path.realpath(''),'err_ias_')
+ResFile = os.path.join(os.path.realpath(''),'Res_ias_')
 # _LogFile = _ErrFile = _ResFile = ''
 _USERNAME= os.getlogin()
 _GlobaLen = 140
@@ -94,6 +93,7 @@ def LogErrDebug(Mess1:str,Mess2:str, Mess3:str = '')->bool:
                 for ims in ListMess:
                     print(f'{dtstr} ; {RMess}', file = fh)
         #------------------------------------------------------------------------------------------------
+        if debug: rpn(f'{dtstr} ; [yellow]{RMess}')
     except Exception as Err:
         Led = False
         if debug:rpn(str(Err))
@@ -105,7 +105,7 @@ def GetLstHPath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
     """ Получение списка домашних папок юзверей на терминальном сервере"""
     LogErrDebug('Message',f'{TermServer = }', 'GetLstHPath')
     ListHP = {}
-    #--------------------------------------------------------------------
+    #--------------------------------------------------------------------{TemplUser}%
     try:
         pc = WMI(TermServer)
         wql = f"SELECT LocalPath, Loaded FROM Win32_UserProfile WHERE '%{TemplUser}%' like LocalPath"
@@ -122,33 +122,45 @@ def GetLstHPath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
         # LogErrDebug('Success',f'Список профилей :{ResHP} ','GetLstHPath')
     return ResHP
 ################################################################################################################################################################
-###################################################################################################################
 if __name__ == '__main__':
     debug = True
-    rpn(f"Модуль создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
+    rpn(f"Модуль создания SymLink для IAS : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
     LogErrDebug('Message',f'Запуск модуля создания SymLink: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}', os.path.basename(__file__))
     LogErrDebug('Message',f'{BlackList = }','Main')
-    for ti in SrvList:
+    SrvDict = { 'AK-VDS-01.ak.local':r'\\AK-VDS-01.ak.local\ibases',
+                'sh-vds-01.shumeiko.local':r'\\sh-vds-01.shumeiko.local\ibases',
+                'SH-VDS-FRAN01.shumeiko.local':r'\\SH-VDS-FRAN01.shumeiko.local\ibases'}
+                #,"cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
+    # SrvList = ("cl-33",)
+    for ti,netibis in SrvDict.items():
         rpn(f'[cyan]{ti}')
         if input('\tОбработать профили на терминале [Y]/N:> ') not in ('Y','y','Д','д',''):continue
         LogErrDebug('Message',f'Обработка профилей на сервере {ti}','Main')
-        lpf = GetLstHPath(r'\o',ti)
-        # lpf = GetLstHPath(r'dev',ti)
+        # lpf = GetLstHPath(r'\o',ti)
+        lpf = GetLstHPath('ias',ti)
         rpn(f'\t{'  UserID':7}   1cestart.cfg symlink  ib*.cfg')
         #-----------------------------------------------------------------------------------------------
         for usid,ilpl in lpf.items():
+            # if debug:rpn(f'{usid = }',end='')
             if usid[:8].lower() in BlackList:
                 LogErrDebug('ErrPoSh',f'{usid:17} клиент из списка исключений','Main')
                 continue
             #-----------------------------------------------------------------------------------------
-            NetUserCfg = fr'\\{ti}\{ilpl[0].replace(':','$')}\AppData\Roaming\1C\1CEStart\1cestart.cfg'
+            NetUserCfg = fr'\\{ti}\{ilpl[0].replace(':','$')}\AppData\Roaming\1C\1CEStart'
+            if not os.path.isdir(NetUserCfg):
+                LogErrDebug('ErrPoSh',f'{ti} ; {usid:17} Нет папки настройки 1С','Main')
+                continue
+                # os.makedirs(NetUserCfg,exist_ok=True)
+            NetUserCfg = os.path.join(NetUserCfg,'1cestart.cfg')
             if (sym := os.path.islink(NetUserCfg)):
                 rpn(f'\t{usid:17}[green1]СимЛинк уже существует')
                 LogErrDebug('Success',f'{ti} ; {usid:17} СимЛинк уже существует','Main')
                 continue
             #-------------------------------------------------------------------------------------------
-            netibis = fr'{ibapath}\{usid[:8]}'
+            # netibis = fr'{ibapath}\{usid[:8]}'
+            if os.path.isdir(os.path.join(netibis,'OMC_ibases')):
+                netibis = os.path.join(netibis,usid[:8])
             if not (rt := os.path.isdir(netibis)):
                 LogErrDebug('ErrPoSh',f'{ti} ; {usid:17} Нет папки клиента на ibases','Main')
                 continue
@@ -158,11 +170,14 @@ if __name__ == '__main__':
                 continue
             #----------------------------------------------------------------------------------------------
             try:
-                if os.path.isfile(NetUserCfg) and not os.path.islink(NetUserCfg):
-                    os.rename(NetUserCfg,f'{os.path.dirname(NetUserCfg)}\\1cestart_cfg.txt')
-                os.symlink(cfgFile, NetUserCfg)
+                if not debug:
+                    if os.path.isfile(NetUserCfg) and not os.path.islink(NetUserCfg):
+                        pass
+                        # os.rename(NetUserCfg,f'{os.path.dirname(NetUserCfg)}\\1cestart_cfg.txt')
+                    # os.symlink(cfgFile, NetUserCfg)
+                    # LogErrDebug('Success',f'{ti} ; {usid:17} СимЛинк создан','Main')
+                # else:rpn(f'{debug = }')
                 rpn(f'\t{usid:16} {os.path.isfile(NetUserCfg)} \t {sym} \t {rt} \t[cyan1]Симлинк создан')
-                LogErrDebug('Success',f'{ti} ; {usid:17} СимЛинк создан','Main')
             except Exception as Mess:
                 rpn(f'[orchid]Ошибка: [yellow]{Mess}')
                 rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')

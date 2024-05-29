@@ -5,13 +5,12 @@ from rich import print as rpn
 from datetime import datetime,timezone,date,timedelta
 #--------------------------------
 _AUTHOR  = 't.me/dokin_sergey'
-_VERSION = '1.0.5'
-_VERDATE = '2024-05-29 14:02'
+_VERSION = '1.0.7'
+_VERDATE = '2024-05-29 20:50'
 #---------------------------------------------
 ibapath = r'\\moscow\ibases'
 # SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
-SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
-# SrvList = ("cl-33",)
+debug = False
 LogFile = os.path.join(os.path.realpath(''),'log_')
 ErrFile = os.path.join(os.path.realpath(''),'err_')
 ResFile = os.path.join(os.path.realpath(''),'Res_')
@@ -122,9 +121,10 @@ def GetLstHPath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
         # LogErrDebug('Success',f'Список профилей :{ResHP} ','GetLstHPath')
     return ResHP
 ################################################################################################################################################################
-###################################################################################################################
 if __name__ == '__main__':
     debug = True
+    SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
+    # SrvList = ("cl-33",)
     rpn(f"Модуль создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
     LogErrDebug('Message',f'Запуск модуля создания SymLink: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}', os.path.basename(__file__))
@@ -133,36 +133,42 @@ if __name__ == '__main__':
         rpn(f'[cyan]{ti}')
         if input('\tОбработать профили на терминале [Y]/N:> ') not in ('Y','y','Д','д',''):continue
         LogErrDebug('Message',f'Обработка профилей на сервере {ti}','Main')
-        lpf = GetLstHPath(r'\o',ti)
+        lpf = GetLstHPath(r'om',ti)
         # lpf = GetLstHPath(r'dev',ti)
         rpn(f'\t{'  UserID':7}   1cestart.cfg symlink  ib*.cfg')
         #-----------------------------------------------------------------------------------------------
         for usid,ilpl in lpf.items():
             if usid[:8].lower() in BlackList:
-                LogErrDebug('ErrPoSh',f'{usid:17} клиент из списка исключений','Main')
+                LogErrDebug('ErrPoSh',f'{ti} ; {usid:16}; клиент из списка исключений','Main')
                 continue
             #-----------------------------------------------------------------------------------------
-            NetUserCfg = fr'\\{ti}\{ilpl[0].replace(':','$')}\AppData\Roaming\1C\1CEStart\1cestart.cfg'
+            NetUserCfg = fr'\\{ti}\{ilpl[0].replace(':','$')}\AppData\Roaming\1C\1CEStart'
+            if not os.path.isdir(NetUserCfg):
+                LogErrDebug('ErrPoSh',f'{ti} ; {usid:16}: Нет папки настройки 1С','Main')
+                continue
+                # os.makedirs(NetUserCfg,exist_ok=True)
+            NetUserCfg = os.path.join(NetUserCfg,'1cestart.cfg')
             if (sym := os.path.islink(NetUserCfg)):
                 rpn(f'\t{usid:17}[green1]СимЛинк уже существует')
-                LogErrDebug('Success',f'{ti} ; {usid:17} СимЛинк уже существует','Main')
+                LogErrDebug('Success',f'{ti} ; {usid:16}; СимЛинк уже существует','Main')
                 continue
             #-------------------------------------------------------------------------------------------
             netibis = fr'{ibapath}\{usid[:8]}'
             if not (rt := os.path.isdir(netibis)):
-                LogErrDebug('ErrPoSh',f'{ti} ; {usid:17} Нет папки клиента на ibases','Main')
+                LogErrDebug('ErrPoSh',f'{ti} ; {usid:16}; Нет папки клиента на ibases','Main')
                 continue
             cfgFile = fr'{netibis}\1cestart_{usid}.cfg'
             if not (rt := os.path.isfile(cfgFile)):
-                LogErrDebug('ErrPoSh',f'{ti} ; {usid:17} Нет файла 1cestart_{usid}.cfg на ibases','Main')
+                LogErrDebug('ErrPoSh',f'{ti} ; {usid:16}; Нет файла 1cestart_{usid}.cfg на ibases','Main')
                 continue
             #----------------------------------------------------------------------------------------------
             try:
                 if os.path.isfile(NetUserCfg) and not os.path.islink(NetUserCfg):
+                    # pass
                     os.rename(NetUserCfg,f'{os.path.dirname(NetUserCfg)}\\1cestart_cfg.txt')
                 os.symlink(cfgFile, NetUserCfg)
                 rpn(f'\t{usid:16} {os.path.isfile(NetUserCfg)} \t {sym} \t {rt} \t[cyan1]Симлинк создан')
-                LogErrDebug('Success',f'{ti} ; {usid:17} СимЛинк создан','Main')
+                LogErrDebug('Success',f'{ti} ; {usid:16}; СимЛинк создан','Main')
             except Exception as Mess:
                 rpn(f'[orchid]Ошибка: [yellow]{Mess}')
                 rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')
