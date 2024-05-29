@@ -122,7 +122,7 @@ def GetListHomePath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
 ###################################################################################################################
 if __name__ == '__main__':
     debug = True
-    rpn(f"Автономный Тест модуля логгирования: {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}")
+    rpn(f"Модуль по терминального создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}")
     logini()
     LogErrDebug('Message',f"Автономный Тест модуля логгирования: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}",os.path.basename(__file__))
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
