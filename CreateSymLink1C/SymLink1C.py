@@ -62,7 +62,7 @@ def LogErrDebug(Mess1:str,Mess2:str, Mess3:str = '')->bool:
         dtnow = datetime.now(timezone.utc) + timedelta(hours=3)
         dtstr = dtnow.strftime("%H:%M:%S")
         PrnStr = f'{dtstr};{_USERNAME:12};{TMess};'
-        lFN = 17
+        lFN = 12
         FN = f'{Funct:{lFN}} ;' if Funct else f'{" ":{lFN}} ;'
         PrnStr += FN
         ListStr = str(RMess).splitlines()
@@ -101,9 +101,9 @@ def LogErrDebug(Mess1:str,Mess2:str, Mess3:str = '')->bool:
         Led = True
     return Led
 ################################################################################################################################################################
-def GetListHomePath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
+def GetLstHPath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
     """ Получение списка домашних папок юзверей на терминальном сервере"""
-    LogErrDebug('Message',f'{TermServer = }', 'GetListHomePath')
+    LogErrDebug('Message',f'{TermServer = }', 'GetLstHPath')
     ListHP = {}
     #--------------------------------------------------------------------
     try:
@@ -113,27 +113,28 @@ def GetListHomePath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
         if len(qrt):
             for ius in qrt:
                 ListHP[os.path.basename(ius.LocalPath).lower()] = (ius.LocalPath,ius.Loaded)
-        LogErrDebug('Message',f'По данному шаблону {TemplUser} обнаружено {len(qrt)} учетных записей','GetListHomePath')
+        LogErrDebug('Message',f'По данному шаблону {TemplUser} обнаружено {len(qrt)} учетных записей','GetLstHPath')
     except Exception as Less:
         LogErrDebug('Failure',f'{Less}','UserHomePath')
-        LogErrDebug('Failure',f'{traceback.format_exc()}','GetListHomePath')
+        LogErrDebug('Failure',f'{traceback.format_exc()}','GetLstHPath')
     else:
         ResHP = dict(sorted(ListHP.items()))
-        # LogErrDebug('Success',f'Список профилей :{ResHP} ','GetListHomePath')
+        # LogErrDebug('Success',f'Список профилей :{ResHP} ','GetLstHPath')
     return ResHP
 ################################################################################################################################################################
 ###################################################################################################################
 if __name__ == '__main__':
     debug = True
     rpn(f"Модуль создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
-    # logini()
-    LogErrDebug('Message',f"Автономный Тест модуля логгирования: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}",os.path.basename(__file__))
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
+    LogErrDebug('Message',f'Запуск модуля создания SymLink: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}', os.path.basename(__file__))
+    LogErrDebug('Message',f'{BlackList = }','Main')
     for ti in SrvList:
         rpn(f'[cyan]{ti}')
         if input('\tОбработать профили на терминале [Y]/N:> ') not in ('Y','y','Д','д',''):continue
-        lpf = GetListHomePath(r'\o',ti)
-        # lpf = GetListHomePath(r'dev',ti)
+        LogErrDebug('Message',f'Обработка профилей на сервере {ti}','Main')
+        lpf = GetLstHPath(r'\o',ti)
+        # lpf = GetLstHPath(r'dev',ti)
         rpn(f'\t{'  UserID':7}   1cestart.cfg symlink  ib*.cfg')
         #-----------------------------------------------------------------------------------------------
         for usid,ilpl in lpf.items():
@@ -166,10 +167,11 @@ if __name__ == '__main__':
                 rpn(f'[orchid]Ошибка: [yellow]{Mess}')
                 rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')
                 LogErrDebug('Failure',f'{Mess}','UserHomePath')
-                LogErrDebug('Failure',f'{traceback.format_exc()}','GetListHomePath')
+                LogErrDebug('Failure',f'{traceback.format_exc()}','GetLstHPath')
             #-------------------------------------------------------------------------------------------------------
         #-----------------------------------------------------------------------------------------------------------
-    input(':-> ')
+    input('Enter выход:-> ')
+    LogErrDebug('Message',f'Выход {os.path.basename(__file__)}','Main')
     os._exit(0)
 else:
     pass
