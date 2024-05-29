@@ -5,8 +5,8 @@ from rich import print as rpn
 from datetime import datetime,timezone,date,timedelta
 #--------------------------------
 _AUTHOR  = 't.me/dokin_sergey'
-_VERSION = '1.0.3'
-_VERDATE = '2024-05-29 11:45'
+_VERSION = '1.0.5'
+_VERDATE = '2024-05-29 12:13'
 #---------------------------------------------
 ibapath = r'\\moscow\ibases'
 SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
@@ -128,6 +128,7 @@ if __name__ == '__main__':
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
     for ti in SrvList:
         rpn(f'[cyan]{ti}')
+        if input('\tОбработать профили на терминале [Y]/N:> ') not in ('Y','y','Д','д',''):continue
         lpf = GetListHomePath(r'\o',ti)
         # lpf = GetListHomePath(r'dev',ti)
         rpn(f'\t{'  UserID':7}   1cestart.cfg symlink  ib*.cfg')
