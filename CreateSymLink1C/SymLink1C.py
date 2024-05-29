@@ -6,21 +6,21 @@ from datetime import datetime,timezone,date,timedelta
 #--------------------------------
 _AUTHOR  = 't.me/dokin_sergey'
 _VERSION = '1.0.5'
-_VERDATE = '2024-05-29 12:13'
+_VERDATE = '2024-05-29 12:25'
 #---------------------------------------------
 ibapath = r'\\moscow\ibases'
-SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
-# SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
-SrvList = ("cl-33",)
+# SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
+SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
+# SrvList = ("cl-33",)
 LogFile = os.path.join(os.path.realpath(''),'log_')
 ErrFile = os.path.join(os.path.realpath(''),'err_')
 ResFile = os.path.join(os.path.realpath(''),'Res_')
-_LogFile = _ErrFile = _ResFile = ''
+# _LogFile = _ErrFile = _ResFile = ''
 _USERNAME= os.getlogin()
 _GlobaLen = 140
 ################################################################################################################################################################
-def logini():
-    global _LogFile,_ErrFile,_ResFile
+try:
+    # global _LogFile,_ErrFile,_ResFile
     _LogFile = f'{LogFile}{str(date.today())}.txt'
     _ErrFile = f'{ErrFile}{str(date.today())}.txt'
     _ResFile = f'{ResFile}{str(date.today())}.txt'
@@ -32,6 +32,9 @@ def logini():
     if os.path.isfile(_ResFile):
         with open(_ResFile, mode = 'a', encoding = 'utf_8') as sn:
             print('*' * _GlobaLen, file = sn)
+except Exception as Mess:
+    rpn(f'[orchid]Ошибка: [yellow]{Mess}')
+    rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')
 ################################################################################################################################################################
 def WordRead(Wrd:str)->bool:
     Wres = False
@@ -122,8 +125,8 @@ def GetListHomePath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
 ###################################################################################################################
 if __name__ == '__main__':
     debug = True
-    rpn(f"Модуль по терминального создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}")
-    logini()
+    rpn(f"Модуль создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
+    # logini()
     LogErrDebug('Message',f"Автономный Тест модуля логгирования: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}",os.path.basename(__file__))
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
     for ti in SrvList:
@@ -157,7 +160,7 @@ if __name__ == '__main__':
                 if os.path.isfile(NetUserCfg) and not os.path.islink(NetUserCfg):
                     os.rename(NetUserCfg,f'{os.path.dirname(NetUserCfg)}\\1cestart_cfg.txt')
                 os.symlink(cfgFile, NetUserCfg)
-                rpn(f'\t{usid:16} {os.path.isfile(NetUserCfg)} \t {sym} \t {rt}\ [cyan1]Симлинк создан')
+                rpn(f'\t{usid:16} {os.path.isfile(NetUserCfg)} \t {sym} \t {rt} \t[cyan1]Симлинк создан')
                 LogErrDebug('Success',f'{ti} ; {usid:17} СимЛинк создан','Main')
             except Exception as Mess:
                 rpn(f'[orchid]Ошибка: [yellow]{Mess}')
