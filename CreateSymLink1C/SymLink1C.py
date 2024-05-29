@@ -6,7 +6,7 @@ from datetime import datetime,timezone,date,timedelta
 #--------------------------------
 _AUTHOR  = 't.me/dokin_sergey'
 _VERSION = '1.0.5'
-_VERDATE = '2024-05-29 12:25'
+_VERDATE = '2024-05-29 14:02'
 #---------------------------------------------
 ibapath = r'\\moscow\ibases'
 # SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
