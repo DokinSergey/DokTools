@@ -6,21 +6,21 @@ from datetime import datetime,timezone,date,timedelta
 #--------------------------------
 _AUTHOR  = 't.me/dokin_sergey'
 _VERSION = '1.0.5'
-_VERDATE = '2024-05-29 12:13'
+_VERDATE = '2024-05-29 12:25'
 #---------------------------------------------
 ibapath = r'\\moscow\ibases'
-SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
-# SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
-SrvList = ("cl-33",)
+# SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
+SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
+# SrvList = ("cl-33",)
 LogFile = os.path.join(os.path.realpath(''),'log_')
 ErrFile = os.path.join(os.path.realpath(''),'err_')
 ResFile = os.path.join(os.path.realpath(''),'Res_')
-_LogFile = _ErrFile = _ResFile = ''
+# _LogFile = _ErrFile = _ResFile = ''
 _USERNAME= os.getlogin()
 _GlobaLen = 140
 ################################################################################################################################################################
-def logini():
-    global _LogFile,_ErrFile,_ResFile
+try:
+    # global _LogFile,_ErrFile,_ResFile
     _LogFile = f'{LogFile}{str(date.today())}.txt'
     _ErrFile = f'{ErrFile}{str(date.today())}.txt'
     _ResFile = f'{ResFile}{str(date.today())}.txt'
@@ -32,6 +32,9 @@ def logini():
     if os.path.isfile(_ResFile):
         with open(_ResFile, mode = 'a', encoding = 'utf_8') as sn:
             print('*' * _GlobaLen, file = sn)
+except Exception as Mess:
+    rpn(f'[orchid]Ошибка: [yellow]{Mess}')
+    rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')
 ################################################################################################################################################################
 def WordRead(Wrd:str)->bool:
     Wres = False
@@ -59,7 +62,7 @@ def LogErrDebug(Mess1:str,Mess2:str, Mess3:str = '')->bool:
         dtnow = datetime.now(timezone.utc) + timedelta(hours=3)
         dtstr = dtnow.strftime("%H:%M:%S")
         PrnStr = f'{dtstr};{_USERNAME:12};{TMess};'
-        lFN = 17
+        lFN = 12
         FN = f'{Funct:{lFN}} ;' if Funct else f'{" ":{lFN}} ;'
         PrnStr += FN
         ListStr = str(RMess).splitlines()
@@ -98,9 +101,9 @@ def LogErrDebug(Mess1:str,Mess2:str, Mess3:str = '')->bool:
         Led = True
     return Led
 ################################################################################################################################################################
-def GetListHomePath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
+def GetLstHPath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
     """ Получение списка домашних папок юзверей на терминальном сервере"""
-    LogErrDebug('Message',f'{TermServer = }', 'GetListHomePath')
+    LogErrDebug('Message',f'{TermServer = }', 'GetLstHPath')
     ListHP = {}
     #--------------------------------------------------------------------
     try:
@@ -110,27 +113,28 @@ def GetListHomePath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
         if len(qrt):
             for ius in qrt:
                 ListHP[os.path.basename(ius.LocalPath).lower()] = (ius.LocalPath,ius.Loaded)
-        LogErrDebug('Message',f'По данному шаблону {TemplUser} обнаружено {len(qrt)} учетных записей','GetListHomePath')
+        LogErrDebug('Message',f'По данному шаблону {TemplUser} обнаружено {len(qrt)} учетных записей','GetLstHPath')
     except Exception as Less:
         LogErrDebug('Failure',f'{Less}','UserHomePath')
-        LogErrDebug('Failure',f'{traceback.format_exc()}','GetListHomePath')
+        LogErrDebug('Failure',f'{traceback.format_exc()}','GetLstHPath')
     else:
         ResHP = dict(sorted(ListHP.items()))
-        # LogErrDebug('Success',f'Список профилей :{ResHP} ','GetListHomePath')
+        # LogErrDebug('Success',f'Список профилей :{ResHP} ','GetLstHPath')
     return ResHP
 ################################################################################################################################################################
 ###################################################################################################################
 if __name__ == '__main__':
     debug = True
-    rpn(f"Модуль по терминального создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}")
-    logini()
-    LogErrDebug('Message',f"Автономный Тест модуля логгирования: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}",os.path.basename(__file__))
+    rpn(f"Модуль создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
+    LogErrDebug('Message',f'Запуск модуля создания SymLink: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}', os.path.basename(__file__))
+    LogErrDebug('Message',f'{BlackList = }','Main')
     for ti in SrvList:
         rpn(f'[cyan]{ti}')
         if input('\tОбработать профили на терминале [Y]/N:> ') not in ('Y','y','Д','д',''):continue
-        lpf = GetListHomePath(r'\o',ti)
-        # lpf = GetListHomePath(r'dev',ti)
+        LogErrDebug('Message',f'Обработка профилей на сервере {ti}','Main')
+        lpf = GetLstHPath(r'\o',ti)
+        # lpf = GetLstHPath(r'dev',ti)
         rpn(f'\t{'  UserID':7}   1cestart.cfg symlink  ib*.cfg')
         #-----------------------------------------------------------------------------------------------
         for usid,ilpl in lpf.items():
@@ -157,16 +161,17 @@ if __name__ == '__main__':
                 if os.path.isfile(NetUserCfg) and not os.path.islink(NetUserCfg):
                     os.rename(NetUserCfg,f'{os.path.dirname(NetUserCfg)}\\1cestart_cfg.txt')
                 os.symlink(cfgFile, NetUserCfg)
-                rpn(f'\t{usid:16} {os.path.isfile(NetUserCfg)} \t {sym} \t {rt}\ [cyan1]Симлинк создан')
+                rpn(f'\t{usid:16} {os.path.isfile(NetUserCfg)} \t {sym} \t {rt} \t[cyan1]Симлинк создан')
                 LogErrDebug('Success',f'{ti} ; {usid:17} СимЛинк создан','Main')
             except Exception as Mess:
                 rpn(f'[orchid]Ошибка: [yellow]{Mess}')
                 rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')
                 LogErrDebug('Failure',f'{Mess}','UserHomePath')
-                LogErrDebug('Failure',f'{traceback.format_exc()}','GetListHomePath')
+                LogErrDebug('Failure',f'{traceback.format_exc()}','GetLstHPath')
             #-------------------------------------------------------------------------------------------------------
         #-----------------------------------------------------------------------------------------------------------
-    input(':-> ')
+    input('Enter выход:-> ')
+    LogErrDebug('Message',f'Выход {os.path.basename(__file__)}','Main')
     os._exit(0)
 else:
     pass
