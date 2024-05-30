@@ -5,7 +5,7 @@ from time import perf_counter,sleep
 from platform import python_version
 from subprocess import Popen, PIPE,TimeoutExpired#,SubprocessError
 __version__ = '1.1.5'
-__verdate__ =2024-05-30 10:1143'
+__verdate__ = '2024-05-30 10:1143'
 
 class DokExcept(Exception):
     def __init__(self, message:str):
