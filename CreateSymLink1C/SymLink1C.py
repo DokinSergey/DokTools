@@ -1,36 +1,29 @@
 import os
 import traceback
-from wmi import WMI
+from wmi import WMI# type: ignore
 from rich import print as rpn
 from datetime import datetime,timezone,date,timedelta
 #--------------------------------
 _AUTHOR  = 't.me/dokin_sergey'
 _VERSION = '1.0.7'
-_VERDATE = '2024-05-29 20:50'
+_VERDATE = '2024-05-30 12:47'
 #---------------------------------------------
 ibapath = r'\\moscow\ibases'
 # SRKpath = r'\\more\COPY\_log\psql-dump-enabled'
 debug = False
-LogFile = os.path.join(os.path.realpath(''),'log_')
-ErrFile = os.path.join(os.path.realpath(''),'err_')
-ResFile = os.path.join(os.path.realpath(''),'Res_')
-# _LogFile = _ErrFile = _ResFile = ''
+_LogNetPath = r'\\more\copy\_log\MakeSymLink'
+_LogLocPath = os.path.realpath('')
 _USERNAME= os.getlogin()
 _GlobaLen = 140
 ################################################################################################################################################################
 try:
-    # global _LogFile,_ErrFile,_ResFile
-    _LogFile = f'{LogFile}{str(date.today())}.txt'
-    _ErrFile = f'{ErrFile}{str(date.today())}.txt'
-    _ResFile = f'{ResFile}{str(date.today())}.txt'
-    with open(_LogFile, mode = 'a', encoding = 'utf_8') as sn:
-        print('*' * _GlobaLen, file = sn)
-    if os.path.isfile(_ErrFile):
-        with open(_ErrFile, mode = 'a', encoding = 'utf_8') as sn:
-            print('*' * _GlobaLen, file = sn)
-    if os.path.isfile(_ResFile):
-        with open(_ResFile, mode = 'a', encoding = 'utf_8') as sn:
-            print('*' * _GlobaLen, file = sn)
+    if not os.path.isdir(_LogNetPath):os.makedirs(_LogNetPath,exist_ok=True)
+    LogFile =  fr'{_LogNetPath}\{str(date.today())}_log.txt'
+    ErrFile =  fr'{_LogNetPath}\{str(date.today())}_err.txt'
+    ResFile =  fr'{_LogNetPath}\{str(date.today())}_res.txt'
+    _LogFile = fr'{_LogLocPath}\{str(date.today())}_log.txt'
+    _ErrFile = fr'{_LogLocPath}\{str(date.today())}_err.txt'
+    _ResFile = fr'{_LogLocPath}\{str(date.today())}_res.txt'
 except Exception as Mess:
     rpn(f'[orchid]Ошибка: [yellow]{Mess}')
     rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')
@@ -45,6 +38,17 @@ def WordRead(Wrd:str)->bool:
                 Wres = True
                 break
     return Wres
+################################################################################################################################################################
+def FileWrite(FlName:str,WMess:tuple[str,...])->bool:# = '',LMess:tuple[str] = ())->bool:
+    try:
+        with open(FlName, mode = 'a', encoding = 'utf_8') as fwl:
+            for istr in WMess:
+                print(f'{istr}', file = fwl)
+    except Exception as FMess:
+        rpn(f'[orchid]Ошибка: [yellow]{FMess}')
+        rpn(f'[orchid]Ошибка: [yellow]{traceback.format_exc()}')
+        return False
+    return True
 ################################################################################################################################################################
 def LogErrDebug(Mess1:str,Mess2:str, Mess3:str = '')->bool:
     TypeMess = ('Warning','Failure','Success','ErrPoSh','Message','ErroCMD')#Caution
@@ -78,20 +82,18 @@ def LogErrDebug(Mess1:str,Mess2:str, Mess3:str = '')->bool:
                         tstr = ''
         if tstr: ListMess.append(tstr)
     #---------------------------------------------------------------------------------------------------------------------------
-        if _LogFile and TMess != 'ErrPoSh':
-            with open(_LogFile, mode = 'a', encoding = 'utf_8') as fh:
-                for ims in ListMess:
-                    print(f'{PrnStr}{ims}', file = fh)
+        TupleMess = tuple(*ListMess,)
+        if TMess not in ('ErrPoSh','Success'):
+            if _LogFile:FileWrite(_LogFile,TupleMess)
+            # if  LogFile:FileWrite( LogFile,tuple(ListMess))
         #------------------------------------------------------------------------------------------------
-        if _ErrFile and TMess == 'ErrPoSh':
-            with open(_ErrFile, mode = 'a', encoding = 'utf_8') as fh:
-                for ims in ListMess:
-                    print(f'{dtstr} ; {RMess}', file = fh)
+        if TMess == 'ErrPoSh':
+            if  ErrFile:FileWrite( ErrFile,(f'{dtstr} ; {RMess}',))
+            if _ErrFile:FileWrite(_ErrFile,(f'{dtstr} ; {RMess}',))
         #------------------------------------------------------------------------------------------------
-        if _ResFile and TMess == 'Success':
-            with open(_ResFile, mode = 'a', encoding = 'utf_8') as fh:
-                for ims in ListMess:
-                    print(f'{dtstr} ; {RMess}', file = fh)
+        if TMess == 'Success':
+            if  ResFile:FileWrite( ResFile,(f'{dtstr} ; {RMess}',))
+            if _ResFile:FileWrite(_ResFile,(f'{dtstr} ; {RMess}',))
         #------------------------------------------------------------------------------------------------
     except Exception as Err:
         Led = False
@@ -126,9 +128,20 @@ if __name__ == '__main__':
     SrvList = ("cl-15", "cl-25", "cl-33","cl-35","cloud", "cloud-vip",'OMC22207', "bali","Baikal")
     # SrvList = ("cl-33",)
     rpn(f"Модуль создания SymLink : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
+    #---------------------------------------------------------------------------------------------------------------------------
+    # FileWrite( LogFile,('*'*_GlobaLen,))
+    FileWrite(_LogFile,('*'*_GlobaLen,))
+    if os.path.isfile( ErrFile):
+        FileWrite( ErrFile,('*'*_GlobaLen,))
+        FileWrite( ErrFile,('Нет ЛОКАЛЬНОЙ папки настройки 1С - Пользователь ни разу не запускал 1С из RDP сессии',))
+    if os.path.isfile(_ErrFile):FileWrite(_ErrFile,('*'*_GlobaLen,))
+    if os.path.isfile( ResFile):FileWrite( ResFile,('*'*_GlobaLen,))
+    if os.path.isfile(_ResFile):FileWrite(_ResFile,('*'*_GlobaLen,))
+#--------------------------------------------------------------------------------------------------------------------------------------
     BlackList = ('omc170ge','omc170gp','omc20p17','omc20p26','omp21222')
     LogErrDebug('Message',f'Запуск модуля создания SymLink: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}', os.path.basename(__file__))
     LogErrDebug('Message',f'{BlackList = }','Main')
+    #--------------------------------------------------------------------------------------------------------------------------------------
     for ti in SrvList:
         rpn(f'[cyan]{ti}')
         if input('\tОбработать профили на терминале [Y]/N:> ') not in ('Y','y','Д','д',''):continue
@@ -144,7 +157,7 @@ if __name__ == '__main__':
             #-----------------------------------------------------------------------------------------
             NetUserCfg = fr'\\{ti}\{ilpl[0].replace(':','$')}\AppData\Roaming\1C\1CEStart'
             if not os.path.isdir(NetUserCfg):
-                LogErrDebug('ErrPoSh',f'{ti} ; {usid:16}: Нет папки настройки 1С','Main')
+                LogErrDebug('ErrPoSh',fr'{ti} ; {usid:16}: Нет ЛОКАЛЬНОЙ папки настройки 1С (\AppData\Roaming\1C\1CEStart)','Main')
                 continue
                 # os.makedirs(NetUserCfg,exist_ok=True)
             NetUserCfg = os.path.join(NetUserCfg,'1cestart.cfg')
@@ -163,10 +176,11 @@ if __name__ == '__main__':
                 continue
             #----------------------------------------------------------------------------------------------
             try:
-                if os.path.isfile(NetUserCfg) and not os.path.islink(NetUserCfg):
-                    # pass
-                    os.rename(NetUserCfg,f'{os.path.dirname(NetUserCfg)}\\1cestart_cfg.txt')
-                os.symlink(cfgFile, NetUserCfg)
+                if not debug:
+                    if os.path.isfile(NetUserCfg) and not os.path.islink(NetUserCfg):
+                        # pass
+                        os.rename(NetUserCfg,f'{os.path.dirname(NetUserCfg)}\\1cestart_cfg.txt')
+                    os.symlink(cfgFile, NetUserCfg)
                 rpn(f'\t{usid:16} {os.path.isfile(NetUserCfg)} \t {sym} \t {rt} \t[cyan1]Симлинк создан')
                 LogErrDebug('Success',f'{ti} ; {usid:16}; СимЛинк создан','Main')
             except Exception as Mess:
