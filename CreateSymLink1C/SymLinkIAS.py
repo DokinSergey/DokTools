@@ -127,6 +127,9 @@ def GetLstHPath(TemplUser:str, TermServer:str)->dict[str,list[str]] :
 if __name__ == '__main__':
     debug = True
     rpn(f"Модуль создания SymLink для IAS : {os.path.basename(__file__)} ver: {_VERSION} от {_VERDATE} автор {_AUTHOR}\n")
+    if not input('Вы уверены для продолжения? :-> ') == '.':
+        input('Только выход :-> ')
+        os._exit(0)
     #---------------------------------------------------------------------------------------------------------------------------
     # FileWrite( LogFile,('*'*_GlobaLen,))
     FileWrite(_LogFile,('*'*_GlobaLen,))
@@ -141,6 +144,8 @@ if __name__ == '__main__':
     LogErrDebug('Message',f'Запуск модуля создания SymLink: {_VERSION} ; от {_VERDATE} ; автор {_AUTHOR}', os.path.basename(__file__))
     LogErrDebug('Message',f'{BlackList = }','Main')
     SrvDict = { 'AK-VDS-01.ak.local':r'\\AK-VDS-01.ak.local\ibases',
+                'KP-VDS-01.kp.local':r'\\KP-VDS-01.kp.local\ibases',
+                # 'IAS22168.ias22168.local':r'',
                 'sh-vds-01.shumeiko.local':r'\\sh-vds-01.shumeiko.local\ibases',
                 'SH-VDS-FRAN01.shumeiko.local':r'\\SH-VDS-FRAN01.shumeiko.local\ibases'}
     # SrvList = ("cl-33",)
