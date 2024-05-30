@@ -4,8 +4,8 @@ from rich import print
 from time import perf_counter,sleep
 from platform import python_version
 from subprocess import Popen, PIPE,TimeoutExpired#,SubprocessError
-__version__ = '1.1.3'
-__verdate__ = '2024-05-17 11:43'
+__version__ = '1.1.5'
+__verdate__ =2024-05-30 10:1143'
 
 class DokExcept(Exception):
     def __init__(self, message:str):
@@ -51,7 +51,7 @@ def cmdexecNoOut(CMDcom:list)->str:
         print(f'[orchid]{traceback.format_exc()}')
 ###########################################################################################################################
 if __name__ == '__main__':
-    print(f'Обновление модулей Python ver: {python_version()}')
+    print(f'Обновление модулей вер.{__version__} для Python ver.{python_version()}')
     start_time = tick_time_1 = tick_time_2 = perf_counter()
 #------------------------------------------------------------------------
     os.chdir(r'C:\Program Files\Python312\Scripts')
@@ -60,16 +60,16 @@ if __name__ == '__main__':
     # print(pls[1].decode('cp866'))
     if  rez:
         restxt = rez.splitlines()[2:]
-        print(f'Доступны для обновления:{len(restxt)}')
+        print(f'[cyan1]Доступны для обновления:{len(restxt)}')
         for ipr in restxt:
-            print(f'\t{ipr}')
+            print(f'\t[cyan]{ipr}')
         tick_time_1 = perf_counter()
         if not input('Обновить?:-> '):
             tick_time_2 = perf_counter()
             for it in restxt:
                 print()
                 tprg = it.split()[0]
-                print(f'Модуль {tprg} версии {it.split()[1]}')
+                print(f'[cyan1]Модуль [cyan]{tprg} [cyan1]версии [cyan]{it.split()[1]}')
                 cmdlist = ['pip','install','-U',f'{tprg}']
                 # cmdlist = ['timeout','/t','5','/nobreak']# >nul
                 cmdexecNoOut(cmdlist)
