@@ -4,8 +4,8 @@ from rich import print
 from time import perf_counter,sleep
 from platform import python_version
 from subprocess import Popen, PIPE,TimeoutExpired#,SubprocessError
-__version__ = '1.1.5'
-__verdate__ = '2024-05-30 10:1143'
+__version__ = '1.2.1'
+__verdate__ = '2024-06-03 00:19'
 
 class DokExcept(Exception):
     def __init__(self, message:str):
@@ -52,27 +52,54 @@ def cmdexecNoOut(CMDcom:list)->str:
 ###########################################################################################################################
 if __name__ == '__main__':
     print(f'Обновление модулей вер.{__version__} для Python ver.{python_version()}')
+    InstDict = {'mypy':False,'pipdeptree':False,'pylint':False,'pysftp':False,'pywmitool':False,'rich':False,'WMI':False}
     start_time = tick_time_1 = tick_time_2 = perf_counter()
 #------------------------------------------------------------------------
     os.chdir(r'C:\Program Files\Python312\Scripts')
+#----------------------------------------------------------------------- Установка, '-a'
+    cmdlist = ['pipdeptree']
+    UpdDict = {};Inst = False;Updt = False
+    rez = cmdexec(cmdlist)
+    restxt = rez.splitlines()#[2:]
+    for ipr in restxt:
+        if '==' in ipr:
+            ai = ipr.split('==')[0]
+            UpdDict[ai] = False #Создаем словарь установленных компонентов для обновления
+            if ai in InstDict: InstDict[ai] = True #Помечаем ТРЕБУЕМЫЕ компоненты как установленные
+    #----------------------------------------------------------------------------------------------
+    for ii,ij in InstDict.items():
+        if not ij:
+            print(f'[cyan]{ii}')
+            Inst = True
+    if Inst:
+        print('[cyan1]Необходимо установить следующие компоненты')
+        if not input('Выполнить? :-> '):
+            for ii,ij in InstDict.items():
+                if not ij:
+                    cmdlist = ['pip','install',f'{ii}']
+                    cmdexecNoOut(cmdlist)
+    print(f'[cyan]{'*'*100}')
+    #-------------------------------------------------
     cmdlist = ['pip', 'list','-o']
     rez = cmdexec(cmdlist)
-    # print(pls[1].decode('cp866'))
     if  rez:
         restxt = rez.splitlines()[2:]
-        print(f'[cyan1]Доступны для обновления:{len(restxt)}')
         for ipr in restxt:
-            print(f'\t[cyan]{ipr}')
-        tick_time_1 = perf_counter()
-        if not input('Обновить?:-> '):
-            tick_time_2 = perf_counter()
-            for it in restxt:
-                print()
-                tprg = it.split()[0]
-                print(f'[cyan1]Модуль [cyan]{tprg} [cyan1]версии [cyan]{it.split()[1]}')
-                cmdlist = ['pip','install','-U',f'{tprg}']
-                # cmdlist = ['timeout','/t','5','/nobreak']# >nul
-                cmdexecNoOut(cmdlist)
+            tprg = ipr.split()[0]
+            if tprg in UpdDict:UpdDict[tprg] = True#Помечаем компонентов требующие обновления
+    #------------------------------------------------------Обновление---------------------------------
+    for ui,uj in UpdDict.items():
+        if uj:
+            print(f'[cyan]{ui}')
+            Updt = True
+    if Updt:
+        print('[cyan1]Необходимо обновить следующие компоненты')
+        if not input('Выполнить? :-> '):
+            for ui,uj in UpdDict.items():
+                if uj:
+                    print(f'[cyan1]Модуль [cyan]{ui}')
+                    cmdlist = ['pip','install','-U',f'{ui}']
+                    cmdexecNoOut(cmdlist)
     else:
         tick_time_2 = perf_counter()
         print('Все модули последней версии')
