@@ -1,11 +1,11 @@
 import os
 import traceback
 from rich import print
-from time import perf_counter,sleep
+from time import sleep#perf_counter,
 from platform import python_version
 from subprocess import Popen, PIPE,TimeoutExpired#,SubprocessError
-__version__ = '1.2.1'
-__verdate__ = '2024-06-03 00:19'
+__version__ = '1.2.3'
+__verdate__ = '2024-06-03 08:29'
 
 class DokExcept(Exception):
     def __init__(self, message:str):
@@ -53,7 +53,6 @@ def cmdexecNoOut(CMDcom:list)->str:
 if __name__ == '__main__':
     print(f'Обновление модулей вер.{__version__} для Python ver.{python_version()}')
     InstDict = {'mypy':False,'pipdeptree':False,'pylint':False,'pysftp':False,'pywmitool':False,'rich':False,'WMI':False}
-    start_time = tick_time_1 = tick_time_2 = perf_counter()
 #------------------------------------------------------------------------
     os.chdir(r'C:\Program Files\Python312\Scripts')
 #----------------------------------------------------------------------- Установка, '-a'
@@ -72,40 +71,45 @@ if __name__ == '__main__':
             print(f'[cyan]{ii}')
             Inst = True
     if Inst:
-        print('[cyan1]Необходимо установить следующие компоненты')
+        print('[cyan1]Необходимо установить перечисленные компоненты')
         if not input('Выполнить? :-> '):
             for ii,ij in InstDict.items():
                 if not ij:
                     cmdlist = ['pip','install',f'{ii}']
                     cmdexecNoOut(cmdlist)
-    print(f'[cyan]{'*'*100}')
+    print(f'\n[cyan]{'*'*100}\n')
     #-------------------------------------------------
+    Upd2Dict = {}
     cmdlist = ['pip', 'list','-o']
     rez = cmdexec(cmdlist)
     if  rez:
         restxt = rez.splitlines()[2:]
         for ipr in restxt:
             tprg = ipr.split()[0]
-            if tprg in UpdDict:UpdDict[tprg] = True#Помечаем компонентов требующие обновления
+            if tprg in UpdDict:
+                UpdDict[tprg] = True #Помечаем компонентов требующие обновления
+            else:Upd2Dict[tprg] = True #2-я очередь обновлений
     #------------------------------------------------------Обновление---------------------------------
     for ui,uj in UpdDict.items():
         if uj:
             print(f'[cyan]{ui}')
             Updt = True
     if Updt:
-        print('[cyan1]Необходимо обновить следующие компоненты')
-        if not input('Выполнить? :-> '):
+        print('[cyan1]Необходимо обновить указанные компоненты')
+        if not input('Выполнить? :-> \n'):
             for ui,uj in UpdDict.items():
                 if uj:
                     print(f'[cyan1]Модуль [cyan]{ui}')
                     cmdlist = ['pip','install','-U',f'{ui}']
                     cmdexecNoOut(cmdlist)
-    else:
-        tick_time_2 = perf_counter()
+    if Upd2Dict:
+        for ui,uj in Upd2Dict.items():
+            if uj:
+                print(f'[cyan1]Модуль [cyan]{ui}')
+                cmdlist = ['pip','install','-U',f'{ui}']
+                cmdexecNoOut(cmdlist)
+    if not Updt and not Upd2Dict:
         print('Все модули последней версии')
     #----------------------------------------------------------------------
-    stop_time = perf_counter()
-    Inetrval_1 = tick_time_1 - start_time
-    Inetrval_2 = stop_time - tick_time_2
-    input(f'\n{Inetrval_1:.5f} : {Inetrval_2:.5f} :-> ')
+    input('\nВыход :-> ')
     os._exit(0)
