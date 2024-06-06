@@ -4,13 +4,13 @@ from rich import print
 from time import sleep#perf_counter,
 from platform import python_version
 from subprocess import Popen, PIPE,TimeoutExpired#,SubprocessError
-__version__ = '1.2.3'
-__verdate__ = '2024-06-03 08:29'
+_version = '1.2.5'
+_verdate = '2024-06-06 16:07'
 
 class DokExcept(Exception):
     def __init__(self, message:str):
         super().__init__(message)
-
+InstDict = {'setuptools':False,'mypy':False,'pipdeptree':False,'pylint':False,'pysftp':False,'pywmitool':False,'rich':False,'WMI':False}
 ###########################################################################################################################
 def cmdexec(CMDcom:list)->str:
     # global
@@ -51,8 +51,8 @@ def cmdexecNoOut(CMDcom:list)->str:
         print(f'[orchid]{traceback.format_exc()}')
 ###########################################################################################################################
 if __name__ == '__main__':
-    print(f'Обновление модулей вер.{__version__} для Python ver.{python_version()}')
-    InstDict = {'mypy':False,'pipdeptree':False,'pylint':False,'pysftp':False,'pywmitool':False,'rich':False,'WMI':False}
+    print(f'Обновление модулей вер.{_version} для Python ver.{python_version()}')
+
 #------------------------------------------------------------------------
     os.chdir(r'C:\Program Files\Python312\Scripts')
 #----------------------------------------------------------------------- Установка, '-a'
