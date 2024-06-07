@@ -1,5 +1,6 @@
 /build
 err_*.txt
 log_*.txt
+*_log.txt
 Res_*.txt
 UpdMod_logg*.txt
