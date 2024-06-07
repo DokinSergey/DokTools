@@ -14,7 +14,7 @@ debug = False
 _LogNetPath = r'\\more\copy\_log\MakeSymLink'
 _LogLocPath = os.path.realpath('')
 _USERNAME= os.getlogin()
-_GlobaLen = 140
+_GlobaLen = 120
 ################################################################################################################################################################
 try:
     if not os.path.isdir(_LogNetPath):os.makedirs(_LogNetPath,exist_ok=True)
