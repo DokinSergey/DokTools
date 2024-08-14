@@ -9,21 +9,18 @@ ListColors = (
     "white",
     "bright_white",
     "red",
-    "orchid",
-    # "bright_red",
+    "orchid",# "bright_red",
     "yellow",
     "bright_yellow",
     "green",
-    "green1",
-    # "bright_green",
+    "green1",# "bright_green",
     "blue",
     "bright_blue",
     "cyan",
-    "cyan1",
-    # "bright_cyan",
+    "cyan1",# "bright_cyan",
     "magenta",
-    # "bright_magenta",
-    "purple"  )
+    "purple" # "bright_magenta",
+    )
 for Colors in ListColors:
     if Colors:
         print (f'[{Colors}]{Colors = }')
