@@ -1,3 +1,4 @@
+import os
 from rich import print
 # from rich.console import Console
 # cns = Console()
@@ -26,12 +27,7 @@ for Colors in ListColors:
         print (f'[{Colors}]{Colors = }')
     else:
         print()
+
 #############################################################################
-'Message',
-'Warning',
-'ErrPoSh',
-'ErroCMD',
-'Failure',
-'Success',
-
-
+input('Выход:-> ')
+os._exit(0)
