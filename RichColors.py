@@ -4,25 +4,42 @@ from rich import print
 # cns = Console()
 version = '1.0.3'
 # Console.rule("[bold red]Chapter 2")
+ColorFile = 'RichColors88.txt'
 print('Образей цветной печати в терминале')
-ListColors = (
-    "bright_black",
-    "white",
-    "bright_white",
-    "red",
-    "orchid",# "bright_red",
-    "yellow",
-    "bright_yellow",
-    "green",
-    "green1",# "bright_green",
-    "blue",
-    "bright_blue",
-    "cyan",
-    "cyan1",# "bright_cyan",
-    "magenta",
-    "purple" # "bright_magenta",
-    )
-for Colors in ListColors:
+if os.path.isfile(ColorFile):
+    with open(ColorFile, mode='r', encoding='utf_8') as coltxt:
+        ListColors = coltxt.readlines()
+else:
+    ListColors = (
+        "bright_black",
+        "white",
+        "bright_white",
+        "red",
+        "bright_red",
+        "red1",
+        "yellow",
+        "bright_yellow",
+        "khaki1",
+        "green",
+        "bright_green",
+        "green1",# 
+        "honeydew2",
+        "blue",
+        "bright_blue",
+        "blue1",
+        "cyan",
+        "cyan1",# 
+        "bright_cyan",
+        "light_cyan1",
+        "magenta",
+        "orchid",
+        "purple", # 
+        "violet",
+        "magenta1",
+        )
+#--------------------------------------------------------------------------
+for Clrs in ListColors:
+    Colors = Clrs.strip()
     if Colors:
         print (f'[{Colors}]{Colors = }')
     else:
