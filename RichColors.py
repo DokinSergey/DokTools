@@ -22,18 +22,18 @@ else:
         "khaki1",
         "green",
         "bright_green",
-        "green1",# 
+        "green1",#
         "honeydew2",
         "blue",
         "bright_blue",
         "blue1",
         "cyan",
-        "cyan1",# 
+        "cyan1",#
         "bright_cyan",
         "light_cyan1",
         "magenta",
         "orchid",
-        "purple", # 
+        "purple", #
         "violet",
         "magenta1",
         )
