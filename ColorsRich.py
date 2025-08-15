@@ -29,6 +29,7 @@ else:
         "dark_cyan",
         "cyan3",
         "bright_cyan",
+        "cyan1",
         "turquoise2",
         "deep_sky_blue1",
         "dodger_blue3",
